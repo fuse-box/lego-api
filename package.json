@@ -1,6 +1,6 @@
 {
   "name": "lego-api",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "lego api",
   "main": "./index.js",
   "web": "./index.js",
@@ -8,7 +8,9 @@
   "alias": "./index.js",
   "module": "./typed/index.js",
   "scripts": {
-    "strip": "flow-remove-types typed/ --pretty --all --out-dir ./"
+    "strip": "flow-remove-types typed/ --pretty --all --out-dir ./",
+    "prepublish": "npm run strip",
+    "test": "ava --verbose"
   },
   "devDependencies": {
     "ava": "*",
