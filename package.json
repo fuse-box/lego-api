@@ -1,0 +1,64 @@
+{
+  "name": "lego-api",
+  "version": "0.1.0",
+  "description": "lego api",
+  "main": "./index.js",
+  "web": "./index.js",
+  "browser": "./index.js",
+  "alias": "./index.js",
+  "module": "./typed/index.js",
+  "scripts": {
+    "strip": "flow-remove-types typed/ --pretty --all --out-dir ./"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "flow-remove-types": "*"
+  },
+  "keywords": [
+    "lego",
+    "conditional",
+    "fluent",
+    "chain",
+    "flipchain",
+    "fliphub-chain",
+    "fusebox-chain",
+    "webpack",
+    "fusebox"
+  ],
+  "license": "MIT",
+  "author": "James <aretecode@gmail.com>",
+  "homepage": "https://github.com/fuse-box/lego-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fuse-box/lego-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fuse-box/lego-api/issues"
+  },
+  "files": [
+    "index.js",
+    "Chainable.js",
+    "ChainedChain.js",
+    "ChainedMap.js",
+    "ChainedSet.js",
+    "LegoAPI.js",
+    "Conditional.js",
+    "deepmerge.js",
+    "./Chainable.js",
+    "./ChainedChain.js",
+    "./ChainedMap.js",
+    "./ChainedSet.js",
+    "./Chainable.js",
+    "./Chainable.js",
+    "./LegoAPI.js",
+    "./Conditional.js",
+    "./deepmerge.js",
+    "./typed/ChainedChain.js",
+    "./typed/ChainedMap.js",
+    "./typed/ChainedSet.js",
+    "./typed/Chainable.js",
+    "./typed/LegoAPI.js",
+    "./typed/Conditional.js",
+    "./typed/deepmerge.js"
+  ]
+}
