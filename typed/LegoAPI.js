@@ -1,5 +1,6 @@
 const ChainedMap = require('./ChainedMap')
 const ChainedSet = require('./ChainedSet')
+const Conditional = require('./Conditional')
 
 /**
  * @classdesc build on demand
@@ -14,17 +15,77 @@ class LegoAPI extends ChainedMap {
   result: ChainedSet
   current: undefined | false | Conditional
 
+  // --- construct/setup ---
+
+  static init(conditions: Object) {
+    return new LegoAPI().conditions(conditions)
+  }
+  static parse(contents: string) {
+    return LegoAPI.init().parse(contents)
+  }
+
   constructor(parent: any) {
     super(parent)
 
     // setup the children, just tell them the className for debugging
     this.result = new ChainedSet(this.className)
     this.conditionals = new ChainedSet(this.className)
+
+    // defaults, configurable
+    this
+      .debug(false)
+      .startRegex()
+      .endRegex()
+      .splitRegex()
   }
+
+  // --- configurable --- (needs docs)
+
+  debug(should = true) {
+    return this.set('debug', should)
+  }
+  startRegex(startRegex = /^\s*\/\*\s*@if\s([\w]+)+\s*\*\//): LegoAPI {
+    return this.set('startRegex', startRegex)
+  }
+  endRegex(endRegex = /^\s*\/\*\s*@end\s*\*\//): LegoAPI {
+    return this.set('endRegex', endRegex)
+  }
+  splitRegex(splitRegex = /\r?\n/): LegoAPI {
+    return this.set('splitRegex', splitRegex)
+  }
+
+  // --- data --- (needs docs)
 
   conditions(conditions: Object): LegoAPI {
     return this.set('conditions', conditions)
   }
+  parse(contents: string): LegoAPI {
+    return this.set('contents', contents)
+  }
+
+  // --- handle ---
+
+  render(conditions: Object): string {
+    const lego = this.conditions(conditions)
+    const {startRegex, endRegex, splitRegex} = this.entries()
+
+    // console.log({startRegex, endRegex, splitRegex})
+
+    return this
+      .get('contents')
+      .split(splitRegex)
+      .map(line => {
+          const startIf = line.match(startRegex)
+          const endIf = line.match(endRegex)
+          if (!startIf && !endIf) return lego.add(line)
+          if (startIf) return lego.start(startIf[1])
+          if (endIf) return lego.end()
+      })
+      .pop()
+      .toString()
+  }
+
+  // --- operations ---
 
   /**
    * @desc when we have a current conditional, append the new name
@@ -91,3 +152,8 @@ class LegoAPI extends ChainedMap {
     return this.result.values().join('\n')
   }
 }
+
+LegoAPI.LegoAPI = LegoAPI
+module.exports = LegoAPI
+module.exports.default = module.exports
+Object.defineProperty(module.exports, '__esModule', {value: true})
