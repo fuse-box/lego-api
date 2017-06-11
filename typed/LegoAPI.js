@@ -1,5 +1,4 @@
-const ChainedMap = require('./ChainedMap')
-const ChainedSet = require('./ChainedSet')
+const { ChainedMap, ChainedSet } = require('chain-able')
 const Conditional = require('./Conditional')
 
 /**
