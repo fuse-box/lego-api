@@ -50,6 +50,6 @@
     "./typed/Conditional.js"
   ],
   "dependencies": {
-    "chain-able": "^2.0.1"
+    "chain-able": "^3.0.0"
   }
 }

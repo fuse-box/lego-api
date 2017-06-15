@@ -741,9 +741,9 @@ caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
 
-chain-able@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/chain-able/-/chain-able-2.0.1.tgz#178a9bbfa69ae9c17fe20f290d2c53edcae0e123"
+chain-able@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/chain-able/-/chain-able-3.0.0.tgz#dcffe8b04f3da210941a23843bc1332bb288ca9f"
 
 chalk@^0.4.0:
   version "0.4.0"
