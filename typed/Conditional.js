@@ -1,6 +1,4 @@
-const Chainable = require('./Chainable')
-const ChainedMap = require('./ChainedMap')
-const ChainedSet = require('./ChainedSet')
+const { ChainedMap } = require('chain-able')
 
 class Conditional extends ChainedMap {
   name(name: string): Conditional {
@@ -28,9 +26,9 @@ class Conditional extends ChainedMap {
     }
 
     const namespace = this.get('name').split('.')
-    const enabled = namespace
-      .filter(name => parent.get('conditions')[name])
-      .length === namespace.length
+    const enabled =
+      namespace.filter(name => parent.get('conditions')[name]).length ===
+      namespace.length
 
     return enabled
   }
@@ -39,4 +37,4 @@ class Conditional extends ChainedMap {
 Conditional.Conditional = Conditional
 module.exports = Conditional
 module.exports.default = module.exports
-Object.defineProperty(module.exports, '__esModule', {value: true})
+Object.defineProperty(module.exports, '__esModule', { value: true })

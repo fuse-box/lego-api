@@ -1,5 +1,4 @@
-const ChainedMap = require('./ChainedMap')
-const ChainedSet = require('./ChainedSet')
+const { ChainedMap, ChainedSet } = require('chain-able')
 const Conditional = require('./Conditional')
 
 /**
@@ -28,19 +27,21 @@ class LegoAPI extends ChainedMap {
     super(parent)
 
     // setup the children, just tell them the className for debugging
-    this.result = new ChainedSet(this.className)
+    this.result = ``
     this.conditionals = new ChainedSet(this.className)
 
     // defaults, configurable
-    this
-      .debug(false)
-      .startRegex()
-      .endRegex()
-      .splitRegex()
+    this.debug(false).startRegex().endRegex().splitRegex()
   }
 
   // --- configurable --- (needs docs)
 
+  log(text) {
+    if (this.get('debug')) {
+      console.log(text)
+    }
+    return this
+  }
   debug(should = true) {
     return this.set('debug', should)
   }
@@ -67,19 +68,19 @@ class LegoAPI extends ChainedMap {
 
   render(conditions: Object): string {
     const lego = this.conditions(conditions)
-    const {startRegex, endRegex, splitRegex} = this.entries()
+    const { startRegex, endRegex, splitRegex } = this.entries()
 
-    // console.log({startRegex, endRegex, splitRegex})
+    this.log({ startRegex, endRegex, splitRegex })
 
-    return this
+    return lego
       .get('contents')
       .split(splitRegex)
       .map(line => {
-          const startIf = line.match(startRegex)
-          const endIf = line.match(endRegex)
-          if (!startIf && !endIf) return lego.add(line)
-          if (startIf) return lego.start(startIf[1])
-          if (endIf) return lego.end()
+        const startIf = line.match(startRegex)
+        const endIf = line.match(endRegex)
+        if (!startIf && !endIf) return lego.add(line)
+        if (startIf) return lego.start(startIf[1])
+        if (endIf) return lego.end()
       })
       .pop()
       .toString()
@@ -102,6 +103,7 @@ class LegoAPI extends ChainedMap {
       namespace = this.current.get('name') + '.' + name
     }
 
+    this.log('starting condition: ' + namespace)
     const condition = new Conditional(this.current || this)
     condition.name(namespace)
 
@@ -123,6 +125,8 @@ class LegoAPI extends ChainedMap {
     this.current = this.current.end()
     if (this.current === this) this.current = false
 
+    this.log('ending current condition')
+
     return this
   }
 
@@ -138,22 +142,25 @@ class LegoAPI extends ChainedMap {
   add(line: string): LegoAPI {
     if (this.current) {
       if (this.current.isEnabled()) {
-        this.result.add(line)
+        this.log('line is enabled, adding: ', line)
+        this.result += line + '\n'
+      } else {
+        this.log('line is not enabled: ' + line)
       }
-    }
-    else {
-      this.result.add(line)
+    } else {
+      this.log('adding line, no current: ' + line)
+      this.result += line + '\n'
     }
 
     return this
   }
 
   toString(): string {
-    return this.result.values().join('\n')
+    return this.result.replace(/(\n{3})+/gm, '\n')
   }
 }
 
 LegoAPI.LegoAPI = LegoAPI
 module.exports = LegoAPI
 module.exports.default = module.exports
-Object.defineProperty(module.exports, '__esModule', {value: true})
+Object.defineProperty(module.exports, '__esModule', { value: true })
