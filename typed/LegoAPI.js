@@ -1,4 +1,4 @@
-const { ChainedMap, ChainedSet } = require('chain-able')
+const {ChainedMap, ChainedSet} = require('chain-able')
 const Conditional = require('./Conditional')
 
 /**
@@ -45,7 +45,7 @@ class LegoAPI extends ChainedMap {
   debug(should = true) {
     return this.set('debug', should)
   }
-  startRegex(startRegex = /^\s*\/\*\s*@if\s([\w]+)+\s*\*\//): LegoAPI {
+  startRegex(startRegex = /^\s*\/\*\s*@if\s([\s\w|&+-]*)+\s*\*\//): LegoAPI {
     return this.set('startRegex', startRegex)
   }
   endRegex(endRegex = /^\s*\/\*\s*@end\s*\*\//): LegoAPI {
@@ -64,13 +64,26 @@ class LegoAPI extends ChainedMap {
     return this.set('contents', contents)
   }
 
+  /**
+   * @example `$eh$!`.interpolate({eh: 'groovy'}) -> 'grovy!'
+   * @param {Object} variables to interpolate with
+   * @return {LegoAPI} @chainable
+   */
+  interpolate(variables) {
+    Object.keys(variables).forEach(varName => {
+      const arg = JSON.stringify(variables[varName])
+      this.result = this.result.replace(`$${varName}$`, arg)
+    })
+    return this
+  }
+
   // --- handle ---
 
   render(conditions: Object): string {
     const lego = this.conditions(conditions)
-    const { startRegex, endRegex, splitRegex } = this.entries()
+    const {startRegex, endRegex, splitRegex} = this.entries()
 
-    this.log({ startRegex, endRegex, splitRegex })
+    this.log({startRegex, endRegex, splitRegex})
 
     return lego
       .get('contents')
@@ -122,7 +135,9 @@ class LegoAPI extends ChainedMap {
    * @return {LegoAPI} @chainable
    */
   end(name: string): LegoAPI {
-    this.current = this.current.end()
+    if (this.current && this.current.end)
+      this.current = this.current.end() || this
+
     if (this.current === this) this.current = false
 
     this.log('ending current condition')
@@ -142,12 +157,14 @@ class LegoAPI extends ChainedMap {
   add(line: string): LegoAPI {
     if (this.current) {
       if (this.current.isEnabled()) {
-        this.log('line is enabled, adding: ', line)
+        this.log('line is enabled, adding: ' + line)
         this.result += line + '\n'
-      } else {
+      }
+      else {
         this.log('line is not enabled: ' + line)
       }
-    } else {
+    }
+    else {
       this.log('adding line, no current: ' + line)
       this.result += line + '\n'
     }
@@ -163,4 +180,4 @@ class LegoAPI extends ChainedMap {
 LegoAPI.LegoAPI = LegoAPI
 module.exports = LegoAPI
 module.exports.default = module.exports
-Object.defineProperty(module.exports, '__esModule', { value: true })
+Object.defineProperty(module.exports, '__esModule', {value: true})
