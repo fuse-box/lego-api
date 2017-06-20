@@ -175,10 +175,9 @@ class LegoAPI extends ChainedMap {
   toString(): string {
     return this.result
       .split('\n')
-      .filter(line => line !== '\n')
+      .filter(line => !['\n', '\r', ''].includes(line.trim()))
       .join('\n')
-      .replace(/(\n{2})+/gm, '\n')
-      .trim()
+      .replace(/(\n|\r{2})+/gm, '\n')
   }
 }
 
