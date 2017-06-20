@@ -1,5 +1,11 @@
 const {ChainedMap} = require('chain-able')
 
+const ObjectValues = obj => {
+  if (Object.values) return Object.values(obj)
+  const keys = Object.keys(obj)
+  return keys.map(key => obj[key])
+}
+
 class Conditional extends ChainedMap {
   name(name: string): Conditional {
     return this.set('name', name.trim())
@@ -43,7 +49,7 @@ class Conditional extends ChainedMap {
         var expression = `return ` + (conditions[name] || name)
         var keys = Object.keys(conditions)
         var fn = new Function(keys, expression)
-        const evaluation = fn.apply(undefined, Object.values(conditions))
+        const evaluation = fn.apply(undefined, ObjectValues(conditions))
 
         if (debug) {
           console.log(expression.replace('return', '') + ' ==', !!evaluation)

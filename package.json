@@ -1,6 +1,6 @@
 {
   "name": "lego-api",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "lego api",
   "main": "./index.js",
   "web": "./index.js",
@@ -17,6 +17,7 @@
     "ava": "*",
     "eslint-config-chain-able": "^1.0.0",
     "eslint-plugin-prettier": "^2.1.1",
+    "fliplog": "^1.0.4",
     "flow-remove-types": "*",
     "prettier": "^1.4.4",
     "prettier-eslint": "^6.3.0"
