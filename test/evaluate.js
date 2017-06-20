@@ -81,5 +81,36 @@ test('can evaluate', t => {
   t.true(rendered.includes('OOGALIEBOOGALIE'))
 })
 
+test('strips empty', t => {
+  const contentsWithEmpty = `
+/* @if true */
+
+
+1
+
+2
+
+3
+
+
+
+4
+
+/* @end */
+
+
+`
+  const expected = `
+1
+2
+3
+4
+`
+  const lego = new LegoAPI()
+  const rendered = lego.debug(false).parse(contentsWithEmpty).render({})
+  console.log(rendered + '')
+  t.true(rendered == expected.trim())
+})
+
 // need to capture output to do this
 test.todo('can use debug')

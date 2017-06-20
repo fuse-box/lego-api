@@ -1,4 +1,4 @@
-const { ChainedMap, ChainedSet } = require('chain-able')
+const {ChainedMap, ChainedSet} = require('chain-able')
 const Conditional = require('./Conditional')
 
 /**
@@ -9,99 +9,99 @@ const Conditional = require('./Conditional')
  *            .end conditions
  */
 class LegoAPI extends ChainedMap {
-    // protected
-    conditionals: ChainedSet
-    result: ChainedSet
-    current: undefined | false | Conditional
+  // protected
+  conditionals: ChainedSet
+  result: ChainedSet
+  current: undefined | false | Conditional
 
-    // --- construct/setup ---
+  // --- construct/setup ---
 
-        static init(conditions: Object) {
-        return new LegoAPI().conditions(conditions)
-    }
-    static parse(contents: string) {
-        return LegoAPI.init().parse(contents)
-    }
+  static init(conditions: Object) {
+    return new LegoAPI().conditions(conditions)
+  }
+  static parse(contents: string) {
+    return LegoAPI.init().parse(contents)
+  }
 
-    constructor(parent: any) {
-        super(parent)
+  constructor(parent: any) {
+    super(parent)
 
-        // setup the children, just tell them the className for debugging
-        this.result = ``
-        this.conditionals = new ChainedSet(this.className)
+    // setup the children, just tell them the className for debugging
+    this.result = ``
+    this.conditionals = new ChainedSet(this.className)
 
-        // defaults, configurable
-        this.debug(false).startRegex().endRegex().splitRegex()
-    }
+    // defaults, configurable
+    this.debug(false).startRegex().endRegex().splitRegex()
+  }
 
-    // --- configurable --- (needs docs)
+  // --- configurable --- (needs docs)
 
-    log(text) {
-        if (this.get('debug')) {
-            console.log(text)
-        }
-        return this
+  log(text) {
+    if (this.get('debug')) {
+      console.log(text)
     }
-    debug(should = true) {
-        return this.set('debug', should)
-    }
-    startRegex(startRegex = /^\s*\/\*\s*@if\s(.*?)\s*\*\//): LegoAPI {
-        return this.set('startRegex', startRegex)
-    }
-    endRegex(endRegex = /^\s*\/\*\s*@end\s*\*\//): LegoAPI {
-        return this.set('endRegex', endRegex)
-    }
-    splitRegex(splitRegex = /\r?\n/): LegoAPI {
-        return this.set('splitRegex', splitRegex)
-    }
+    return this
+  }
+  debug(should = true) {
+    return this.set('debug', should)
+  }
+  startRegex(startRegex = /^\s*\/\*\s*@if\s(.*?)\s*\*\//): LegoAPI {
+    return this.set('startRegex', startRegex)
+  }
+  endRegex(endRegex = /^\s*\/\*\s*@end\s*\*\//): LegoAPI {
+    return this.set('endRegex', endRegex)
+  }
+  splitRegex(splitRegex = /\r?\n/): LegoAPI {
+    return this.set('splitRegex', splitRegex)
+  }
 
-    // --- data --- (needs docs)
+  // --- data --- (needs docs)
 
-        conditions(conditions: Object): LegoAPI {
-        return this.set('conditions', conditions)
-    }
-    parse(contents: string): LegoAPI {
-        return this.set('contents', contents)
-    }
+  conditions(conditions: Object): LegoAPI {
+    return this.set('conditions', conditions)
+  }
+  parse(contents: string): LegoAPI {
+    return this.set('contents', contents)
+  }
 
-    /**
+  /**
      * @example `$eh$!`.interpolate({eh: 'groovy'}) -> 'grovy!'
      * @param {Object} variables to interpolate with
      * @return {LegoAPI} @chainable
      */
-        interpolate(variables) {
-        Object.keys(variables).forEach(varName => {
-            const arg = JSON.stringify(variables[varName])
-            this.result = this.result.replace(`$${varName}$`, arg)
-        })
-        return this
-    }
+  interpolate(variables) {
+    Object.keys(variables).forEach(varName => {
+      const arg = JSON.stringify(variables[varName])
+      this.result = this.result.replace(`$${varName}$`, arg)
+    })
+    return this
+  }
 
-    // --- handle ---
+  // --- handle ---
 
-        render(conditions: Object): string {
-        const lego = this.conditions(conditions)
-        const { startRegex, endRegex, splitRegex } = this.entries()
+  render(conditions: Object): string {
+    const lego = this.conditions(conditions)
+    const {startRegex, endRegex, splitRegex} = this.entries()
 
-        this.log({ startRegex, endRegex, splitRegex })
+    this.log({startRegex, endRegex, splitRegex})
 
-        return lego
-            .get('contents')
-            .split(splitRegex)
-            .map(line => {
-                const startIf = line.match(startRegex)
-                const endIf = line.match(endRegex)
-                if (!startIf && !endIf) return lego.add(line)
-                if (startIf) return lego.start(startIf[1])
-                if (endIf) return lego.end()
-            })
-            .pop()
-            .toString()
-    }
+    return lego
+      .get('contents')
+      .split(splitRegex)
+      .map(line => {
+        const startIf = line.match(startRegex)
+        const endIf = line.match(endRegex)
+        if (!startIf && !endIf) return lego.add(line)
+        if (startIf) return lego.start(startIf[1])
+        if (endIf) return lego.end()
+      })
+      .pop()
+      .toString()
+  }
 
-    // --- operations ---
+  // --- operations ---
 
-    /**
+  /**
      * @desc when we have a current conditional, append the new name
      *       otherwise, use the provided conditional
      *       @modifies this.current
@@ -110,23 +110,23 @@ class LegoAPI extends ChainedMap {
      * @param  {string} name
      * @return {LegoAPI} @chainable
      */
-        start(name: string): LegoAPI {
-        let namespace = name
-        if (this.current) {
-            namespace = this.current.get('name') + '.' + name
-        }
-
-        this.log('starting condition: ' + namespace)
-        const condition = new Conditional(this.current || this)
-        condition.name(namespace)
-
-        this.current = condition
-        this.conditionals.add(condition)
-
-        return this
+  start(name: string): LegoAPI {
+    let namespace = name
+    if (this.current) {
+      namespace = this.current.get('name') + '.' + name
     }
 
-    /**
+    this.log('starting condition: ' + namespace)
+    const condition = new Conditional(this.current || this)
+    condition.name(namespace)
+
+    this.current = condition
+    this.conditionals.add(condition)
+
+    return this
+  }
+
+  /**
      * @desc calls .end on this.current,
      *       when it has a parent, go back up,
      *       otherwise, null
@@ -134,18 +134,18 @@ class LegoAPI extends ChainedMap {
      * @param  {string} name
      * @return {LegoAPI} @chainable
      */
-        end(name: string): LegoAPI {
-        if (this.current && this.current.end)
-            this.current = this.current.end() || this
+  end(name: string): LegoAPI {
+    if (this.current && this.current.end)
+      this.current = this.current.end() || this
 
-        if (this.current === this) this.current = false
+    if (this.current === this) this.current = false
 
-        this.log('ending current condition')
+    this.log('ending current condition')
 
-        return this
-    }
+    return this
+  }
 
-    /**
+  /**
      * @desc when there is a conditional... check it
      *       when no conditional...
      *       Unconditional Love...
@@ -154,28 +154,35 @@ class LegoAPI extends ChainedMap {
      * @param  {string} line
      * @return {LegoAPI} @chainable
      */
-        add(line: string): LegoAPI {
-        if (this.current) {
-            if (this.current.isEnabled()) {
-                this.log('line is enabled, adding: ' + line)
-                this.result += line + '\n'
-            } else {
-                this.log('line is not enabled: ' + line)
-            }
-        } else {
-            this.log('adding line, no current: ' + line)
-            this.result += line + '\n'
-        }
-
-        return this
+  add(line: string): LegoAPI {
+    if (this.current) {
+      if (this.current.isEnabled()) {
+        this.log('line is enabled, adding: ' + line)
+        this.result += line + '\n'
+      }
+      else {
+        this.log('line is not enabled: ' + line)
+      }
+    }
+    else {
+      this.log('adding line, no current: ' + line)
+      this.result += line + '\n'
     }
 
-        toString(): string {
-        return this.result.replace(/(\n{3})+/gm, '\n')
-    }
+    return this
+  }
+
+  toString(): string {
+    return this.result
+      .split('\n')
+      .filter(line => line !== '\n')
+      .join('\n')
+      .replace(/(\n{2})+/gm, '\n')
+      .trim()
+  }
 }
 
 LegoAPI.LegoAPI = LegoAPI
 module.exports = LegoAPI
 module.exports.default = module.exports
-Object.defineProperty(module.exports, '__esModule', { value: true })
+Object.defineProperty(module.exports, '__esModule', {value: true})
